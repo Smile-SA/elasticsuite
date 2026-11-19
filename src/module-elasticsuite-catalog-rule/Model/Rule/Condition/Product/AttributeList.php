@@ -165,6 +165,24 @@ class AttributeList
     }
 
     /**
+     * Check whether a rule attribute exists in the mapping.
+     *
+     * @param string $attributeName Attribute code.
+     *
+     * @return bool
+     */
+    public function hasField($attributeName): bool
+    {
+        try {
+            $this->getField($attributeName);
+
+            return true;
+        } catch (\LogicException $exception) {
+            return false;
+        }
+    }
+
+    /**
      * Retrieve the search engine mapping.
      *
      * @return MappingInterface

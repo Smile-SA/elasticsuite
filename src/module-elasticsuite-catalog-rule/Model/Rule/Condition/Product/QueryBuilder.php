@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product;
 
 use Magento\Framework\App\ObjectManager;
+use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\ContextAwareInterface;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\QueryDependencyRecorderInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
@@ -27,6 +28,8 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class QueryBuilder
 {
@@ -56,6 +59,16 @@ class QueryBuilder
     private $dependencyRecorder;
 
     /**
+     * @var LoggerInterface|null
+     */
+    private $logger;
+
+    /**
+     * @var bool[]
+     */
+    private $unmappedAttributes = [];
+
+    /**
      * Constructor.
      *
      * @param AttributeList                         $attributeList             Search rule product attributes list
@@ -64,18 +77,21 @@ class QueryBuilder
      * @param NestedFilterInterface[]               $nestedFilters             Filters applied to nested fields during
      *                                                                         query building.
      * @param QueryDependencyRecorderInterface|null $dependencyRecorder        Search query dependency recorder.
+     * @param LoggerInterface|null                  $logger                    Logger.
      */
     public function __construct(
         AttributeList $attributeList,
         QueryFactory $queryFactory,
         SpecialAttributesProvider $specialAttributesProvider,
         $nestedFilters = [],
-        ?QueryDependencyRecorderInterface $dependencyRecorder = null
+        ?QueryDependencyRecorderInterface $dependencyRecorder = null,
+        ?LoggerInterface $logger = null
     ) {
         $this->queryFactory              = $queryFactory;
         $this->attributeList             = $attributeList;
         $this->specialAttributesProvider = $specialAttributesProvider;
         $this->nestedFilters             = $nestedFilters;
+        $this->logger                    = $logger;
         $this->dependencyRecorder        = $dependencyRecorder ?: ObjectManager::getInstance()->get(
             QueryDependencyRecorderInterface::class
         );
@@ -91,76 +107,124 @@ class QueryBuilder
      */
     public function getSearchQuery(ProductCondition $productCondition)
     {
-        $query = null;
-
         $query = $this->getSpecialAttributesSearchQuery($productCondition);
 
         $conditionValue = $productCondition->getValue();
         $conditionValue = array_filter(is_array($conditionValue) ? $conditionValue : [$conditionValue], 'strlen');
         if ($query === null && (!empty($conditionValue) || $productCondition->getOperator() === '<=>')) {
-            $this->prepareFieldValue($productCondition);
-            $queryType   = QueryInterface::TYPE_TERMS;
-            $queryParams = $this->getTermsQueryParams($productCondition);
-
-            if ($productCondition->getInputType() === 'string' && !in_array($productCondition->getOperator(), ['()', '!()', '<=>'])) {
-                $queryType   = QueryInterface::TYPE_MATCH;
-                $queryParams = $this->getMatchQueryParams($productCondition);
-            } elseif (in_array($productCondition->getOperator(), ['>=', '>', '<=', '<'])) {
-                $queryType   = QueryInterface::TYPE_RANGE;
-                $queryParams = $this->getRangeQueryParams($productCondition);
-            } elseif ($productCondition->getOperator() === '<=>') {
-                $queryType  = QueryInterface::TYPE_MISSING;
-                $queryParams = ['field' => $this->getSearchFieldName($productCondition)];
-            }
-
-            $query = $this->prepareQuery($queryType, $queryParams)->setName($productCondition->asString());
-
-            if (substr($productCondition->getOperator(), 0, 1) === '!') {
-                $query = $this->applyNegation($query);
-            }
-
-            $field = $this->getSearchField($productCondition);
-
-            if ($field->isNested()) {
-                $nestedPath        = $field->getNestedPath();
-                $nestedQueryParams = ['query' => $query, 'path' => $nestedPath];
-
-                if (isset($this->nestedFilters[$nestedPath])) {
-                    if ($this->nestedFilters[$nestedPath] instanceof ContextAwareInterface) {
-                        $this->dependencyRecorder->addContextDependencies(
-                            $this->nestedFilters[$nestedPath]->getContextDependencies()
-                        );
-                    }
-                    $nestedFilterClauses           = [];
-                    $nestedFilterClauses['must'][] = $this->nestedFilters[$nestedPath]->getFilter();
-                    $nestedFilterClauses['must'][] = $nestedQueryParams['query'];
-
-                    $nestedFilter = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $nestedFilterClauses);
-
-                    $nestedQueryParams['query'] = $nestedFilter;
-                }
-
-                $query = $this->queryFactory->create(QueryInterface::TYPE_NESTED, $nestedQueryParams);
-                $query->setName($productCondition->asString());
-            }
+            $query = $this->getAttributeSearchQuery($productCondition);
         }
 
         return $query;
     }
 
     /**
-     * Create a query for special attribute.
-     * @SuppressWarnings(PHPMD.ElseExpression)
+     * Build a query for an indexed attribute.
      *
      * @param ProductCondition $productCondition Product condition.
+     * @return QueryInterface
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    private function getAttributeSearchQuery(ProductCondition $productCondition)
+    {
+        $query = $this->getUnmappedAttributeQuery($productCondition);
+        if ($query !== null) {
+            return $query;
+        }
+
+        $this->prepareFieldValue($productCondition);
+        $queryType   = QueryInterface::TYPE_TERMS;
+        $queryParams = $this->getTermsQueryParams($productCondition);
+
+        if ($productCondition->getInputType() === 'string'
+            && !in_array($productCondition->getOperator(), ['()', '!()', '<=>'])
+        ) {
+            $queryType   = QueryInterface::TYPE_MATCH;
+            $queryParams = $this->getMatchQueryParams($productCondition);
+        } elseif (in_array($productCondition->getOperator(), ['>=', '>', '<=', '<'])) {
+            $queryType   = QueryInterface::TYPE_RANGE;
+            $queryParams = $this->getRangeQueryParams($productCondition);
+        } elseif ($productCondition->getOperator() === '<=>') {
+            $queryType  = QueryInterface::TYPE_MISSING;
+            $queryParams = ['field' => $this->getSearchFieldName($productCondition)];
+        }
+
+        $query = $this->prepareQuery($queryType, $queryParams)->setName($productCondition->asString());
+
+        if (substr($productCondition->getOperator(), 0, 1) === '!') {
+            $query = $this->applyNegation($query);
+        }
+
+        $field = $this->getSearchField($productCondition);
+
+        if ($field->isNested()) {
+            $nestedPath        = $field->getNestedPath();
+            $nestedQueryParams = ['query' => $query, 'path' => $nestedPath];
+
+            if (isset($this->nestedFilters[$nestedPath])) {
+                if ($this->nestedFilters[$nestedPath] instanceof ContextAwareInterface) {
+                    $this->dependencyRecorder->addContextDependencies(
+                        $this->nestedFilters[$nestedPath]->getContextDependencies()
+                    );
+                }
+                $nestedFilterClauses           = [];
+                $nestedFilterClauses['must'][] = $this->nestedFilters[$nestedPath]->getFilter();
+                $nestedFilterClauses['must'][] = $nestedQueryParams['query'];
+
+                $nestedFilter = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $nestedFilterClauses);
+
+                $nestedQueryParams['query'] = $nestedFilter;
+            }
+
+            $query = $this->queryFactory->create(QueryInterface::TYPE_NESTED, $nestedQueryParams);
+            $query->setName($productCondition->asString());
+        }
+
+        return $query;
+    }
+
+    /**
+     * Build a false condition and warn once when an attribute cannot be resolved.
      *
+     * @param ProductCondition $productCondition Product condition.
      * @return QueryInterface|null
      */
-    private function getSpecialAttributesSearchQuery(ProductCondition $productCondition)
+    private function getUnmappedAttributeQuery(ProductCondition $productCondition)
+    {
+        $attribute = $productCondition->getAttribute();
+        if ($this->attributeList->hasField($attribute)) {
+            return null;
+        }
+
+        if ($this->logger !== null && !isset($this->unmappedAttributes[$attribute])) {
+            $this->logger->warning(sprintf(
+                'Product attribute "%s" used in a rule condition is not indexed '
+                . '(check its search, filter, promo-rule and sort settings); the condition matches no products.',
+                $attribute
+            ));
+            $this->unmappedAttributes[$attribute] = true;
+        }
+
+        return $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['field' => 'entity_id', 'values' => []]);
+    }
+
+    /**
+     * Build the SKU query when applicable.
+     *
+     * @param ProductCondition $productCondition Product condition.
+     * @return QueryInterface|null
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     */
+    private function getSkuSearchQuery(ProductCondition $productCondition)
     {
         $query = null;
 
         if ($productCondition->getAttribute() === 'sku') {
+            $query = $this->getUnmappedAttributeQuery($productCondition);
+            if ($query !== null) {
+                return $query;
+            }
+
             $queryParams = [];
             $fieldName   = $this->getSearchFieldName($productCondition);
 
@@ -190,6 +254,21 @@ class QueryBuilder
             $queryParams['minimumShouldMatch'] = 1;
             $query = $this->prepareQuery(QueryInterface::TYPE_BOOL, $queryParams);
         }
+
+        return $query;
+    }
+
+    /**
+     * Create a query for special attribute.
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @param ProductCondition $productCondition Product condition.
+     *
+     * @return QueryInterface|null
+     */
+    private function getSpecialAttributesSearchQuery(ProductCondition $productCondition)
+    {
+        $query = $this->getSkuSearchQuery($productCondition);
 
         if (in_array($productCondition->getAttribute(), array_keys($this->specialAttributesProvider->getList()))) {
             $specialAttribute = $this->specialAttributesProvider->getAttribute($productCondition->getAttribute());
