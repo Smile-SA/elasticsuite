@@ -40,8 +40,8 @@
       if (options.withLinks && isUrl(json)) {
         html += '<a href="' + json + '" class="json-string" target="_blank">' + json + '</a>';
       } else {
-        // Escape double quotes in the rendered non-URL string.
-        json = json.replace(/&quot;/g, '\\&quot;');
+        // Escape backslashes first, then double quotes, in the rendered non-URL string.
+        json = json.replace(/\\/g, '\\\\').replace(/&quot;/g, '\\&quot;');
         html += '<span class="json-string">"' + json + '"</span>';
       }
     } else if (typeof json === 'number') {
