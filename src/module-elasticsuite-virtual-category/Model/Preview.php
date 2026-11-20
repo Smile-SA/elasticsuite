@@ -133,6 +133,16 @@ class Preview extends AbstractPreview
             $collection->addQueryFilter($queryFilter);
         }
 
+        if ($this->category->getId()) {
+            // Like on the storefront (see LayerPlugin), sort on the product positions of the previewed category only.
+            $collection->addSortFilterParameters(
+                'position',
+                'category.position',
+                'category',
+                ['category.category_id' => $this->category->getId()]
+            );
+        }
+
         $sortBy            = $this->getSortBy() ?? 'position';
         $directionFallback = $sortBy !== 'position' ? Collection::SORT_ORDER_ASC : Collection::SORT_ORDER_DESC;
 
