@@ -211,13 +211,16 @@ jobs:
                   php-version: ${{ matrix.php-versions }}
                   extensions: hash, iconv, mbstring, intl, bcmath, ctype, gd, pdo, mysql, curl, zip, dom, sockets, soap, openssl, simplexml, xsl
                   ini-values: post_max_size=256M, max_execution_time=180
+              env:
+                  update: true
 
             - name: "[Init] Add php-fpm"
               env:
                   version: ${{ matrix.php-versions }}
               run: |
-                sudo apt-get install -y php$version-fpm
-                : # sudo service php$version-fpm start
+                : Assumes php-fpm is already installed.
+                : sudo apt-get -qq update
+                : sudo apt-get install -y php$version-fpm
                 sudo cp /usr/sbin/php-fpm$version /usr/bin/php-fpm
                 sudo service php$version-fpm start
                 sudo service php$version-fpm status
