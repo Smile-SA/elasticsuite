@@ -115,6 +115,9 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function setTermFilter($term)
     {
+        // Escape user-supplied LIKE wildcards and backslashes before the deliberate
+        // whitespace/hyphen-to-wildcard substitution, so the value cannot alter the query.
+        $term = $this->resourceHelper->escapeLikeValue((string) $term);
         $term = preg_replace("/[\s-]/", "%", $term);
         $this->addTermFilterToSelect($term);
 
@@ -230,8 +233,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
 
             $select->group("main_table." . ThesaurusInterface::THESAURUS_ID);
 
-            $select->where("expansion_table.term LIKE '%{$term}%'", $term)
-                ->orWhere("reference_table.term LIKE '%{$term}%'", $term);
+            $select->where("expansion_table.term LIKE ?", "%{$term}%")
+                ->orWhere("reference_table.term LIKE ?", "%{$term}%");
 
             $this->termsLinked = true;
         }
