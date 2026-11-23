@@ -56,7 +56,7 @@ const smileTracker = (function () {
         let results = null;
 
         if (name && name.replace) {
-            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            name = name.replace(/[\[]/g, "\\[").replace(/[\]]/g, "\\]");
             const regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
             results = regex.exec(window.location.search);
         }
