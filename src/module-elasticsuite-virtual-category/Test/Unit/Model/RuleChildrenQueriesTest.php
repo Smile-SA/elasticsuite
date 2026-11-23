@@ -21,13 +21,18 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory as ProductConditionFactory;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
+use Smile\ElasticsuiteCore\Search\Request\Query\Terms;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteVirtualCategory\Api\Rule\BuildLimitInterface;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\BuildScope;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product as ProductCondition;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\NoBuildLimit;
 
 /**
  * Unit test for the children queries of a virtual category: a virtual descendant is not expanded again when the
@@ -172,6 +177,27 @@ class RuleChildrenQueriesTest extends TestCase
     }
 
     /**
+     * The queries of virtual children served from the cache are embedded, named after the child: the name of the
+     * query of an aborted build still ends with BuildLimitInterface::ABORTED_QUERY_NAME, which identifies it.
+     *
+     * @return void
+     */
+    public function testCachedChildrenQueriesAreEmbedded(): void
+    {
+        $aborted = new Terms([0], 'entity_id', 'category 100 => ' . BuildLimitInterface::ABORTED_QUERY_NAME);
+        $cached  = new Terms([7, 8], 'entity_id');
+        $this->addChildrenQueries($this->getRule([], [], [100 => $aborted, 400 => $cached]));
+
+        $this->assertSame($aborted, $this->should[1]);
+        $this->assertSame(
+            '(1/2/42/100) child virtual category [Category 100]:100 => ' . BuildLimitInterface::ABORTED_QUERY_NAME,
+            $aborted->getName()
+        );
+        $this->assertSame($cached, $this->should[2]);
+        $this->assertSame('(1/2/42/400) child virtual category [Category 400]:400', $cached->getName());
+    }
+
+    /**
      * Build the children queries of the virtual category 42.
      *
      * @param Rule  $rule               Rule.
@@ -191,12 +217,14 @@ class RuleChildrenQueriesTest extends TestCase
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param int[] $boundaries   Expansion boundaries.
-     * @param int[] $withoutQuery Virtual categories without query.
+     * @param int[]                 $boundaries    Expansion boundaries.
+     * @param int[]                 $withoutQuery  Virtual categories without query.
+     * @param QueryInterface[]|null $cachedQueries Cached queries of the categories, by id: if any, the category
+     *                                             queries are not stubbed but served from the (mocked) cache.
      *
      * @return Rule
      */
-    private function getRule(array $boundaries = [], array $withoutQuery = []): Rule
+    private function getRule(array $boundaries = [], array $withoutQuery = [], ?array $cachedQueries = null): Rule
     {
         $config = $this->createMock(Config::class);
         $config->method('getVirtualRulesExpansionBoundaries')->willReturn($boundaries);
@@ -248,21 +276,38 @@ class RuleChildrenQueriesTest extends TestCase
         /** @var Rule|MockObject $rule */
         $rule = $this->getMockBuilder(Rule::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getCategorySearchQuery'])
+            ->onlyMethods($cachedQueries === null ? ['getCategorySearchQuery'] : [])
             ->getMock();
-        $rule->method('getCategorySearchQuery')->willReturnCallback(
-            function ($category) use ($withoutQuery) {
-                $this->builtIds[]      = (int) $category->getId();
-                $this->builtStoreIds[] = $category->getStoreId();
-                if (in_array((int) $category->getId(), $withoutQuery, true)) {
-                    return null;
-                }
+        if ($cachedQueries === null) {
+            $rule->method('getCategorySearchQuery')->willReturnCallback(
+                function ($category) use ($withoutQuery) {
+                    $this->builtIds[]      = (int) $category->getId();
+                    $this->builtStoreIds[] = $category->getStoreId();
+                    if (in_array((int) $category->getId(), $withoutQuery, true)) {
+                        return null;
+                    }
 
-                return $this->createMock(QueryInterface::class);
+                    return $this->createMock(QueryInterface::class);
+                }
+            );
+        }
+        $rule->setData('store_id', 1);
+        $queryCache = $this->createMock(QueryCache::class);
+        $queryCache->method('load')->willReturnCallback(
+            function (string $cacheKey) use ($cachedQueries) {
+                // Cache key: getCategorySearchQuery|<store id>|<category id>|...
+                $categoryId = (int) explode('|', $cacheKey)[2];
+                if (!isset($cachedQueries[$categoryId])) {
+                    return false;
+                }
+                $data = ['query' => $cachedQueries[$categoryId], 'rootPathIds' => [], 'embedded' => [$categoryId]];
+
+                return ['data' => $data, 'tags' => [], 'expiresAt' => null, 'context' => []];
             }
         );
-        $rule->setData('store_id', 1);
         $properties = [
+            'queryCache'                => $queryCache,
+            'buildScope'                => new BuildScope(new NoBuildLimit()),
             'config'                    => $config,
             'categoryCollectionFactory' => $collectionFactory,
             'productConditionsFactory'  => $productConditionFactory,

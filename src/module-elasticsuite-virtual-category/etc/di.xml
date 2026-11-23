@@ -215,6 +215,7 @@
     <preference for="Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider" type="Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider"/>
 
     <preference for="Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface" type="Smile\ElasticsuiteVirtualCategory\Model\Rule"/>
+    <preference for="Smile\ElasticsuiteVirtualCategory\Api\Rule\BuildLimitInterface" type="Smile\ElasticsuiteVirtualCategory\Model\Rule\NoBuildLimit"/>
 
     <!-- In GraphQL, discard the "virtual_rule" field of categories -->
     <type name="Magento\CatalogGraphQl\Model\Config\CategoryAttributeReader">

@@ -27,8 +27,10 @@ use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\BuildScope;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product as ProductCondition;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\NoBuildLimit;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\RootCategoryProvider;
 
 /**
@@ -239,6 +241,7 @@ class RuleTest extends TestCase
             'queryFactory'             => $queryFactory,
             'dependencyCollector'      => $dependencyCollector,
             'rootCategoryProvider'     => $rootCategoryProvider,
+            'buildScope'               => new BuildScope(new NoBuildLimit()),
         ];
         foreach ($properties as $property => $value) {
             $reflection = new \ReflectionProperty(Rule::class, $property);
