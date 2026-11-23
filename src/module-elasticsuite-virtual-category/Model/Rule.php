@@ -476,7 +476,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     /**
      * Query of a category whose build was aborted by the build limit: no products, cached for a while (so that the
      * costly build is not attempted on every request) along with the tags of the categories involved (so that fixing
-     * the rules involved invalidates it). It is named BuildLimitInterface::ABORTED_QUERY_NAME to be identifiable.
+     * the rules involved invalidates it). Its name ends with BuildLimitInterface::ABORTED_QUERY_NAME, which identifies
+     * it.
      *
      * @param CategoryInterface|int $category  Search category.
      * @param int                   $storeId   Store id.
@@ -498,9 +499,13 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             )
         );
 
+        $label = sprintf('category %d', $categoryId);
+        if (is_object($category)) {
+            $label = sprintf('(%s) category [%s]:%d', $category->getPath(), $category->getName(), $categoryId);
+        }
         $query     = $this->queryFactory->create(
             QueryInterface::TYPE_TERMS,
-            ['field' => 'entity_id', 'values' => [0], 'name' => BuildLimitInterface::ABORTED_QUERY_NAME]
+            ['field' => 'entity_id', 'values' => [0], 'name' => $label . ' => ' . BuildLimitInterface::ABORTED_QUERY_NAME]
         );
         $expiresAt = time() + $exception->getLifetime();
         $cacheTags = $this->dependencyCollector->getCacheTags(
@@ -843,14 +848,17 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 } elseif (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
                     $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
                     if ($childrenQuery !== null) {
-                        $childrenQuery->setName(
-                            sprintf(
-                                '(%s) child virtual category [%s]:%d',
-                                $childrenCategory->getPath(),
-                                $childrenCategory->getName(),
-                                $childrenCategory->getId()
-                            )
+                        $childName = sprintf(
+                            '(%s) child virtual category [%s]:%d',
+                            $childrenCategory->getPath(),
+                            $childrenCategory->getName(),
+                            $childrenCategory->getId()
                         );
+                        if (str_ends_with((string) $childrenQuery->getName(), BuildLimitInterface::ABORTED_QUERY_NAME)) {
+                            // Kept at the end of the name: it identifies the query of an aborted build, even embedded.
+                            $childName .= ' => ' . BuildLimitInterface::ABORTED_QUERY_NAME;
+                        }
+                        $childrenQuery->setName($childName);
                         $queryParams['should'][] = $childrenQuery;
                         // An expansion boundary query does not expand its descendants.
                         if (!$this->isExpansionBoundary((int) $childrenCategory->getId())) {

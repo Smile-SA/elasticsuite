@@ -93,7 +93,11 @@ class RuleBuildLimitTest extends TestCase
         $this->assertSame(
             [
                 QueryInterface::TYPE_TERMS,
-                ['field' => 'entity_id', 'values' => [0], 'name' => BuildLimitInterface::ABORTED_QUERY_NAME],
+                [
+                    'field'  => 'entity_id',
+                    'values' => [0],
+                    'name'   => 'category 42 => ' . BuildLimitInterface::ABORTED_QUERY_NAME,
+                ],
             ],
             end($this->createdQueries)
         );
