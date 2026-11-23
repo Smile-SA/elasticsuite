@@ -44,9 +44,11 @@
         <plugin name="decorate_category_tree_virtual_categories" type="Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\TreePlugin" />
     </type>
 
-    <!-- Decorating virtual categories with the ES logo in the categories widgets' category chooser -->
     <type name="Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree">
+        <!-- Decorating virtual categories with the ES logo in the categories widgets' category chooser -->
         <plugin name="decorate_category_tree_virtual_categories" type="Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\TreePlugin" />
+        <!-- Loading the selected categories' paths in the rule conditions category chooser -->
+        <plugin name="load_selected_categories_paths" type="Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\Checkboxes\TreePlugin" />
     </type>
 
     <!-- Decorating category picker in URL rewrite edit block -->
