@@ -24,8 +24,11 @@ use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
+use Smile\ElasticsuiteVirtualCategory\Api\Rule\BuildLimitInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\BuildAbortedException;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\BuildScope;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\RootCategoryProvider;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory;
@@ -110,6 +113,11 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private $leftOutForRoot = false;
 
     /**
+     * @var BuildScope
+     */
+    private $buildScope;
+
+    /**
      * Deprecated, unused: virtual root categories are loaded once per process by the root categories provider.
      *
      * @var Category[]
@@ -151,6 +159,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param RootCategoryProvider|null $rootCategoryProvider      Virtual root categories provider.
      * @param QueryCache|null           $queryCache                Virtual rules query cache.
      * @param DependencyCollector|null  $dependencyCollector       Virtual rules dependency collector.
+     * @param BuildScope|null           $buildScope                Scope of the builds submitted to the build limit.
      */
     public function __construct(
         Context $context,
@@ -171,7 +180,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         array                   $data = [],
         ?RootCategoryProvider   $rootCategoryProvider = null,
         ?QueryCache             $queryCache = null,
-        ?DependencyCollector    $dependencyCollector = null
+        ?DependencyCollector    $dependencyCollector = null,
+        ?BuildScope             $buildScope = null
     ) {
         $this->queryFactory              = $queryFactory;
         $this->productConditionsFactory  = $productConditionsFactory;
@@ -187,6 +197,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $this->dependencyCollector       = $dependencyCollector ?: ObjectManager::getInstance()->get(
             DependencyCollector::class
         );
+        $this->buildScope                = $buildScope ?: ObjectManager::getInstance()->get(BuildScope::class);
 
         parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory, $conditionDataFactory, $data);
     }
@@ -224,14 +235,17 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     public function getCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
     {
+        if (empty($excludedCategories) && !$this->buildScope->isOpen()) {
+            return $this->getTopLevelCategorySearchQuery($category);
+        }
+
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . __FUNCTION__);
         $this->leftOutForRoot = false;
         $categoryId = (int) (!is_object($category) ? $category : $category->getId());
-        $storeId = !is_object($category) ? $this->getStoreId() : $category->getStoreId();
-        $storeId = $storeId ?: $this->storeManager->getStore()->getId();
+        $storeId    = $this->getCategoryStoreId($category);
 
         // The store root category has no page of its own: wherever it is used, it stands for the store tree products.
-        if ($this->isStoreRootUsedAsStandardCategory($categoryId, (int) $storeId)) {
+        if ($this->isStoreRootUsedAsStandardCategory($categoryId, $storeId)) {
             $query = $this->getStoreRootQuery($category);
             \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
 
@@ -249,24 +263,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             return $query;
         }
 
-        // The contexts (eg. the customer group) are only added to the key of the queries depending on them, by the
-        // query cache.
-        $cacheKey = implode(
-            '|',
-            array_filter(
-                [
-                    __FUNCTION__,
-                    $storeId,
-                    $categoryId,
-                    (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
-                    (int) $this->config->isStoreRootUsedAsStandardCategory(),
-                    $this->config->getVirtualRulesExpansionBoundariesCacheKey(),
-                ],
-                function ($keyPart) {
-                    return $keyPart !== null;
-                }
-            )
-        );
+        $cacheKey = $this->getCacheKey($categoryId, $storeId);
 
         // Every category read while building the query is recorded as a dependency (and so a cache tag) of it.
         $this->dependencyCollector->start();
@@ -293,6 +290,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 $this->dependencyCollector->setExpiration($cacheData['expiresAt']);
                 $this->dependencyCollector->addContextDependencies($cacheData['context']);
             } else {
+                $this->buildScope->beforeBuild($categoryId);
                 if (!is_object($category)) {
                     $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
                 }
@@ -321,6 +319,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             $expiresAt           = $this->dependencyCollector->getExpiration();
             $contextDependencies = $this->dependencyCollector->getContextDependencies();
             $cacheTags           = $this->dependencyCollector->stop();
+            \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
         }
 
         if ($isCacheable && $isBuilt && $query !== null) {
@@ -331,7 +330,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         // Set last: the categories built meanwhile have set it too.
         $this->leftOutForRoot = $leftOutForRoot;
-        \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
 
         return $query;
     }
@@ -448,6 +446,130 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $query;
+    }
+
+    /**
+     * Build or load the query of a category requested out of any other query build, within the build limit.
+     * If the build limit aborts the build, the category returns no products for a while, and an error is logged.
+     *
+     * @param CategoryInterface|int $category Search category.
+     *
+     * @return QueryInterface|null
+     */
+    private function getTopLevelCategorySearchQuery($category): ?QueryInterface
+    {
+        $storeId = $this->getCategoryStoreId($category);
+        $this->buildScope->open($storeId);
+
+        try {
+            return $this->getCategorySearchQuery($category);
+        } catch (BuildAbortedException $exception) {
+            // Not left out: the aborted builds did not get to set it.
+            $this->leftOutForRoot = false;
+
+            return $this->getBuildAbortedQuery($category, $storeId, $exception);
+        } finally {
+            $this->buildScope->close();
+        }
+    }
+
+    /**
+     * Query of a category whose build was aborted by the build limit: no products, cached for a while (so that the
+     * costly build is not attempted on every request) along with the tags of the categories involved (so that fixing
+     * the rules involved invalidates it). Its name ends with BuildLimitInterface::ABORTED_QUERY_NAME, which identifies
+     * it.
+     *
+     * @param CategoryInterface|int $category  Search category.
+     * @param int                   $storeId   Store id.
+     * @param BuildAbortedException $exception Abort of the build.
+     *
+     * @return QueryInterface
+     */
+    private function getBuildAbortedQuery($category, int $storeId, BuildAbortedException $exception): QueryInterface
+    {
+        $categoryId = (int) (!is_object($category) ? $category : $category->getId());
+        $this->_logger->error(
+            sprintf(
+                'Elasticsuite: the query of category %d (store %d) has not been built, it returns no products for the'
+                . ' next %d seconds. %s',
+                $categoryId,
+                $storeId,
+                $exception->getLifetime(),
+                $exception->getMessage()
+            )
+        );
+
+        $label = sprintf('category %d', $categoryId);
+        if (is_object($category)) {
+            $label = sprintf('(%s) category [%s]:%d', $category->getPath(), $category->getName(), $categoryId);
+        }
+        $query     = $this->queryFactory->create(
+            QueryInterface::TYPE_TERMS,
+            ['field' => 'entity_id', 'values' => [0], 'name' => $label . ' => ' . BuildLimitInterface::ABORTED_QUERY_NAME]
+        );
+        $expiresAt = time() + $exception->getLifetime();
+        $cacheTags = $this->dependencyCollector->getCacheTags(
+            array_merge([$categoryId], $exception->getInvolvedCategoryIds())
+        );
+        // The query embedding it, if any (eg. the queries of the children of a category), must expire as well.
+        $this->dependencyCollector->addCacheTags($cacheTags);
+        $this->dependencyCollector->setExpiration($expiresAt);
+
+        $useSharedCache = !is_object($category) || !$category->getHasDraftVirtualRule();
+        $this->queryCache->save(
+            $this->getCacheKey($categoryId, $storeId),
+            ['query' => $query, 'rootPathIds' => [], 'embedded' => [$categoryId]],
+            $cacheTags,
+            $expiresAt,
+            [],
+            $useSharedCache
+        );
+
+        return $query;
+    }
+
+    /**
+     * Store id of a category query.
+     *
+     * @param CategoryInterface|int $category Search category.
+     *
+     * @return int
+     */
+    private function getCategoryStoreId($category): int
+    {
+        $storeId = !is_object($category) ? $this->getStoreId() : $category->getStoreId();
+
+        return (int) ($storeId ?: $this->storeManager->getStore()->getId());
+    }
+
+    /**
+     * Cache key of a category query.
+     * The contexts (eg. the customer group) are only added to the key of the queries depending on them, by the query
+     * cache.
+     *
+     * @param int $categoryId Category id.
+     * @param int $storeId    Store id.
+     *
+     * @return string
+     */
+    private function getCacheKey(int $categoryId, int $storeId): string
+    {
+        return implode(
+            '|',
+            array_filter(
+                [
+                    'getCategorySearchQuery',
+                    $storeId,
+                    $categoryId,
+                    (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
+                    (int) $this->config->isStoreRootUsedAsStandardCategory(),
+                    $this->config->getVirtualRulesExpansionBoundariesCacheKey(),
+                ],
+                function ($keyPart) {
+                    return $keyPart !== null;
+                }
+            )
+        );
     }
 
     /**
@@ -726,14 +848,17 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 } elseif (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
                     $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
                     if ($childrenQuery !== null) {
-                        $childrenQuery->setName(
-                            sprintf(
-                                '(%s) child virtual category [%s]:%d',
-                                $childrenCategory->getPath(),
-                                $childrenCategory->getName(),
-                                $childrenCategory->getId()
-                            )
+                        $childName = sprintf(
+                            '(%s) child virtual category [%s]:%d',
+                            $childrenCategory->getPath(),
+                            $childrenCategory->getName(),
+                            $childrenCategory->getId()
                         );
+                        if (str_ends_with((string) $childrenQuery->getName(), BuildLimitInterface::ABORTED_QUERY_NAME)) {
+                            // Kept at the end of the name: it identifies the query of an aborted build, even embedded.
+                            $childName .= ' => ' . BuildLimitInterface::ABORTED_QUERY_NAME;
+                        }
+                        $childrenQuery->setName($childName);
                         $queryParams['should'][] = $childrenQuery;
                         // An expansion boundary query does not expand its descendants.
                         if (!$this->isExpansionBoundary((int) $childrenCategory->getId())) {

@@ -33,8 +33,10 @@ use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\Collection;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\BuildScope;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product as ProductCondition;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\NoBuildLimit;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\RootCategoryProvider;
 
 /**
@@ -426,6 +428,7 @@ class RuleBuildContextTest extends TestCase
             'queryCache'                => new QueryCache($this->getSharedCache(), $this->getQueryContextResolver()),
             'dependencyCollector'       => $dependencyCollector,
             'rootCategoryProvider'      => $this->getRootCategoryProvider(),
+            'buildScope'                => new BuildScope(new NoBuildLimit()),
         ];
         foreach ($properties as $property => $value) {
             $reflection = new \ReflectionProperty(Rule::class, $property);
