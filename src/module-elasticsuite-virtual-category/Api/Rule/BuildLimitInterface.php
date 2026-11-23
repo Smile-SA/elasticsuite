@@ -31,8 +31,9 @@ use Smile\ElasticsuiteVirtualCategory\Model\Rule\BuildAbortedException;
 interface BuildLimitInterface
 {
     /**
-     * Name of the query returning no products of a category whose build was aborted (see BuildAbortedException):
-     * it identifies that query, or the queries embedding it, as incomplete.
+     * End of the name of the query returning no products of a category whose build was aborted (see
+     * BuildAbortedException), after a label of the category (eg. "(1/2/42) category [Shoes]:42 =>
+     * virtual_cat_rule_build_aborted"): it identifies that query, or the queries embedding it, as incomplete.
      */
     public const ABORTED_QUERY_NAME = 'virtual_cat_rule_build_aborted';
 
