@@ -27,7 +27,7 @@ env:
   mysql84: 3384
   # Composer security advisories to ignore for each Magento version (composer config policy.advisories.ignore-id).
   # Key must be "advisories-" + the exact matrix.magento-versions value. No key = nothing ignored.
-  advisories-2.4.6-p15: '["PKSA-qv5y-crcz-9nxw", "PKSA-kbc7-dq62-pt7d", "PKSA-w9tt-7782-78jx"]'
+  advisories-2.4.6-p15: '["PKSA-qv5y-crcz-9nxw", "PKSA-kbc7-dq62-pt7d", "PKSA-w9tt-7782-78jx", "PKSA-t85t-2sdq-9qvz"]'
   advisories-2.4.7-p10: '["PKSA-w9tt-7782-78jx"]'
 
 jobs:
