@@ -152,7 +152,6 @@ class Spellchecker implements SpellcheckerInterface
 
         $doc = [
             '_index'          => $request->getIndex(),
-            '_type'           => '_doc',
             'term_statistics' => true,
             'fields'          => [
                 MappingInterface::DEFAULT_SPELLING_FIELD,
