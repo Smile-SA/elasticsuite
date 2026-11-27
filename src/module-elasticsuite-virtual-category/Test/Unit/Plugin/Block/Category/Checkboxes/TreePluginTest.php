@@ -25,6 +25,7 @@ use Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\Checkboxes\TreePlugi
  *
  * Covered scenarios:
  * - The initial tree with selected categories registers a root built from their paths
+ * - The paths are loaded once per block, and the cached category collection is released
  * - Lazy-loading a branch does not change the root
  * - The initial tree without selected categories does not change the root
  *
@@ -45,6 +46,24 @@ class TreePluginTest extends TestCase
         $tree->expects($this->once())->method('getRootByIds')->with([3182, 5315]);
 
         $this->assertNull((new TreePlugin())->beforeGetRoot($tree));
+    }
+
+    /**
+     * Test that the paths are loaded once per block, whatever the number of getRoot() calls,
+     * and that the cached category collection is released after loading them.
+     *
+     * @return void
+     */
+    public function testSelectedPathsAreLoadedOnce(): void
+    {
+        $tree = $this->getTree([3182, 5315]);
+        $tree->expects($this->once())->method('getRootByIds')->with([3182, 5315]);
+        $tree->expects($this->once())->method('unsetData')->with('category_collection');
+
+        $plugin = new TreePlugin();
+        $this->assertNull($plugin->beforeGetRoot($tree));
+        $this->assertNull($plugin->beforeGetRoot($tree));
+        $this->assertNull($plugin->beforeGetRoot($tree));
     }
 
     /**
@@ -82,8 +101,21 @@ class TreePluginTest extends TestCase
      */
     private function getTree(array $categoryIds): Tree
     {
+        $data = [];
         $tree = $this->createMock(Tree::class);
         $tree->method('getCategoryIds')->willReturn($categoryIds);
+        $tree->method('getData')->willReturnCallback(
+            function ($key = '') use (&$data) {
+                return $data[$key] ?? null;
+            }
+        );
+        $tree->method('setData')->willReturnCallback(
+            function ($key, $value = null) use (&$data, &$tree) {
+                $data[$key] = $value;
+
+                return $tree;
+            }
+        );
 
         return $tree;
     }
