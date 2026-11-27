@@ -550,6 +550,7 @@
 
     <type name="Smile\ElasticsuiteCore\Api\Client\ClientInterface">
         <plugin name="indexSettingsBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Client\ClientPlugin"/>
+        <plugin name="termVectorsBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Client\TermVectorsPlugin"/>
     </type>
 
     <type name="\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Mapper">
