@@ -13,8 +13,11 @@
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute;
 
+use Magento\Config\Model\Config\Source\Yesno;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\SpecialAttributeInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 
 /**
  * Special "is_in_stock" attribute class.
@@ -26,18 +29,27 @@ use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductConditi
 class IsInStock implements SpecialAttributeInterface
 {
     /**
-     * @var \Magento\Config\Model\Config\Source\Yesno
+     * @var Yesno
      */
     private $booleanSource;
 
     /**
+     * @var QueryFactory
+     */
+    private QueryFactory $queryFactory;
+
+    /**
      * IsInStock constructor.
      *
-     * @param \Magento\Config\Model\Config\Source\Yesno $booleanSource Boolean Source
+     * @param Yesno        $booleanSource Boolean Source
+     * @param QueryFactory $queryFactory  Query Factory
      */
-    public function __construct(\Magento\Config\Model\Config\Source\Yesno $booleanSource)
-    {
+    public function __construct(
+        Yesno $booleanSource,
+        QueryFactory $queryFactory
+    ) {
         $this->booleanSource = $booleanSource;
+        $this->queryFactory = $queryFactory;
     }
 
     /**
@@ -54,8 +66,19 @@ class IsInStock implements SpecialAttributeInterface
      */
     public function getSearchQuery(ProductCondition $condition)
     {
-        // Query can be computed directly with the attribute code and value. (stock.is_in_stock = true).
-        return null;
+        $queryParams = [];
+
+        $queryParams[] = $this->queryFactory->create(
+            QueryInterface::TYPE_RANGE,
+            ['bounds' => ['gt' => (float) 0], 'field' => 'stock.qty']
+        );
+
+        $queryParams[] = $this->queryFactory->create(
+            QueryInterface::TYPE_TERM,
+            ['value' => true, 'field' => 'stock.is_in_stock']
+        );
+
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $queryParams]);
     }
 
     /**

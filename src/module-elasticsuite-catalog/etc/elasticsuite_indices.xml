@@ -40,6 +40,7 @@
                 <field name="children_ids" type="integer" />
                 <field name="configurable_attributes" type="keyword" />
                 <field name="indexed_attributes" type="keyword" />
+                <field name="is_saleable" type="integer" />
 
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="price.price" type="double" nestedPath="price" />
