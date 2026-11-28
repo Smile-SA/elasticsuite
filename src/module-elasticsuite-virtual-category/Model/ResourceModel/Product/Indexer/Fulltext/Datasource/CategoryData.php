@@ -77,7 +77,7 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
                 'product_id'     => 'cpi.product_id',
                 'is_parent'      => 'cpi.is_parent',
                 'is_virtual'     => new \Zend_Db_Expr('"false"'),
-                'position'       => 'p.position',
+                'position'       => 'cpi.position',
                 'is_blacklisted' => 'p.is_blacklisted',
             ]);
 
@@ -110,7 +110,7 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
                 'product_id'     => 'cpi.product_id',
                 'is_parent'      => 'cpi.is_parent',
                 'is_virtual'     => new \Zend_Db_Expr('"false"'),
-                'position'       => 'p.position',
+                'position'       => 'cpi.position',
                 'is_blacklisted' => 'p.is_blacklisted',
             ]);
 
