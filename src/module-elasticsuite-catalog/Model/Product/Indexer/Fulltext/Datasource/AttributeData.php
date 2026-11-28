@@ -20,6 +20,7 @@ use Magento\Store\Model\ScopeInterface;
 use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute as AttributeHelper;
 use Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
+use Smile\ElasticsuiteCatalog\Scope\Config;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
@@ -59,6 +60,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * Constructor
      *
+     * @param Config                    $config                      Configuration retriever
      * @param ResourceModel             $resourceModel               Resource model.
      * @param FieldFactory              $fieldFactory                Mapping field factory.
      * @param AttributeHelper           $attributeHelper             Attribute helper.
@@ -67,6 +69,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      * @param ScopeConfigInterface|null $scopeConfig                 Scope Config.
      */
     public function __construct(
+        Config $config,
         ResourceModel $resourceModel,
         FieldFactory $fieldFactory,
         AttributeHelper $attributeHelper,
@@ -74,7 +77,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         array $forbiddenChildrenAttributes = [],
         ?ScopeConfigInterface $scopeConfig = null
     ) {
-        parent::__construct($resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
+        parent::__construct($config, $resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
 
         $this->scopeConfig = $scopeConfig;
         $this->forbiddenChildrenAttributes = array_values($forbiddenChildrenAttributes);
@@ -87,6 +90,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     {
         $productIds   = array_keys($indexData);
         $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
+
+        if (!$this->config->isIncludeChildAttributes()) {
+            return $indexData;
+        }
 
         $relationsByChildId = $this->resourceModel->loadChildrens($productIds, $storeId);
 
