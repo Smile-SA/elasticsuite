@@ -115,6 +115,9 @@ class Root
 
         $urls = [];
         foreach ($categoryIds as $categoryId) {
+            if (!isset($categories[$categoryId])) {
+                continue;
+            }
             $category = $categories[$categoryId];
             $urls[] = $category->getUrlKey();
         }
@@ -219,7 +222,12 @@ class Root
     }
 
     /**
-     * Retrieve categories by their Ids
+     * Retrieve categories by their Ids.
+     *
+     * No visibility filter (e.g. addIsActiveFilter()) is applied here: the caller already knows exactly
+     * which category ids it needs (built from the virtual category's own path and its virtual root's path),
+     * including ids of categories that may be disabled, like a disabled parent category. Filtering them out
+     * would make getVirtualCategorySubtreePath() unable to find them by id afterward.
      *
      * @param array $categoryIds The category Ids
      *
@@ -229,8 +237,7 @@ class Root
     {
         $collection = $this->categoryCollectionFactory->create();
 
-        $collection->addIsActiveFilter()
-            ->addUrlRewriteToResult()
+        $collection->addUrlRewriteToResult()
             ->addNameToResult()
             ->addAttributeToSelect('url_path')
             ->addAttributeToSelect('url_key')
