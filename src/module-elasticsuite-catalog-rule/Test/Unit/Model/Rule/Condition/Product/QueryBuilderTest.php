@@ -20,6 +20,8 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Combine;
 use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\QueryContextResolverInterface;
@@ -94,6 +96,317 @@ class QueryBuilderTest extends TestCase
     ];
 
     /**
+     * Missing fields must fail closed, including negative operators and special attribute fallbacks.
+     *
+     * @dataProvider unmappedAttributeProvider
+     * @param string $attribute Attribute code.
+     * @param string $operator  Condition operator.
+     * @return void
+     */
+    public function testUnmappedAttributeMatchesNothing($attribute, $operator)
+    {
+        $attributeList = $this->getAdvancedAttributeList([
+            new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER),
+        ]);
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('warning')->with(
+            sprintf(
+                'Product attribute "%s" used in a rule condition is not indexed '
+                . '(check its search, filter, promo-rule and sort settings); the condition matches no products.',
+                $attribute
+            )
+        );
+        $queryBuilder = new QueryBuilder(
+            $attributeList,
+            $this->getQueryFactory(),
+            $this->getSpecialAttributesProvider(),
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class),
+            $logger
+        );
+        $condition = $this->getProductConditionMock();
+        $condition->method('getValue')->willReturn('1');
+        $condition->method('getInputType')->willReturn('string');
+        $condition->method('__call')->willReturnMap([
+            ['getAttribute', [], $attribute],
+            ['getOperator', [], $operator],
+        ]);
+
+        for ($i = 0; $i < 2; $i++) {
+            $query = $queryBuilder->getSearchQuery($condition);
+            $this->assertInstanceOf(Terms::class, $query);
+            $this->assertSame('entity_id', $query->getField());
+            $this->assertSame([], $query->getValues());
+        }
+    }
+
+    /**
+     * Direct callers can omit the logger without needing a global ObjectManager for warnings.
+     *
+     * @return void
+     */
+    public function testUnmappedAttributeWithoutLoggerMatchesNothing()
+    {
+        $builder = new QueryBuilder(
+            $this->getAdvancedAttributeList([new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER)]),
+            $this->getQueryFactory(),
+            $this->getSpecialAttributesProvider(),
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
+        );
+        $condition = $this->getProductConditionMock();
+        $condition->method('getValue')->willReturn('1');
+        $condition->method('__call')->willReturnMap([
+            ['getAttribute', [], 'brand'],
+            ['getOperator', [], '=='],
+        ]);
+
+        $query = $builder->getSearchQuery($condition);
+        $this->assertInstanceOf(Terms::class, $query);
+        $this->assertSame('entity_id', $query->getField());
+        $this->assertSame([], $query->getValues());
+    }
+
+    /**
+     * @return array
+     */
+    public static function unmappedAttributeProvider(): array
+    {
+        $cases = [];
+        foreach (['brand', 'sku', 'price', 'stock.qty'] as $attribute) {
+            foreach (['==', '!=', '()', '!()', '{}', '!{}', '>=', '<=>'] as $operator) {
+                $cases[$attribute . ' ' . $operator] = [$attribute, $operator];
+            }
+        }
+
+        return $cases;
+    }
+
+    /**
+     * Attribute availability must use the same field aliases as field lookup.
+     *
+     * @return void
+     */
+    public function testAttributeAvailabilityUsesMappedFieldName()
+    {
+        $attributeList = $this->getAdvancedAttributeList([
+            new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER),
+            new Field('category.category_id', FieldInterface::FIELD_TYPE_INTEGER, 'category'),
+        ]);
+
+        $this->assertTrue($attributeList->hasField('category_ids'));
+        $this->assertTrue($attributeList->hasField('category_id'));
+        $this->assertFalse($attributeList->hasField('price'));
+    }
+
+    /**
+     * Empty values retain the original null or SKU Boolean query behavior.
+     *
+     * @dataProvider emptyAttributeProvider
+     * @param string $attribute Attribute code.
+     * @param mixed  $value     Empty value.
+     * @param bool   $mapped    Whether the field is mapped.
+     * @return void
+     */
+    public function testEmptyAttributeQuery($attribute, $value, $mapped)
+    {
+        $fields = [new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER)];
+        if ($mapped) {
+            $fields[] = new Field($attribute, FieldInterface::FIELD_TYPE_TEXT);
+        }
+        $attributeList = $this->getAdvancedAttributeList($fields);
+        $logger = $this->createMock(LoggerInterface::class);
+        if ($attribute === 'sku' && !$mapped) {
+            $logger->expects($this->once())->method('warning');
+        } else {
+            $logger->expects($this->never())->method('warning');
+        }
+        $builder = new QueryBuilder(
+            $attributeList,
+            $this->getQueryFactory(),
+            $this->getSpecialAttributesProvider(),
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class),
+            $logger
+        );
+        $condition = $this->getProductConditionMock();
+        $condition->method('getValue')->willReturn($value);
+        $condition->method('__call')->willReturnMap([
+            ['getAttribute', [], $attribute],
+            ['getOperator', [], '=='],
+        ]);
+
+        $query = $builder->getSearchQuery($condition);
+        if ($attribute !== 'sku') {
+            $this->assertNull($query);
+        } elseif (!$mapped) {
+            $this->assertInstanceOf(Terms::class, $query);
+            $this->assertSame([], $query->getValues());
+        } else {
+            $this->assertInstanceOf(Boolean::class, $query);
+            $this->assertSame(1, $query->getMinimumShouldMatch());
+            $this->assertCount(1, $query->getShould());
+            $match = $query->getShould()[0];
+            $this->assertInstanceOf(MatchQuery::class, $match);
+            $this->assertSame('sku.untouched', $match->getField());
+            $this->assertSame('', $match->getQueryText());
+            $this->assertSame('100%', $match->getMinimumShouldMatch());
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public static function emptyAttributeProvider(): array
+    {
+        $cases = [];
+        foreach (['', [], ['', '']] as $index => $value) {
+            foreach ([true, false] as $mapped) {
+                $cases['brand empty ' . $index . ' mapped=' . (int) $mapped] = ['brand', $value, $mapped];
+            }
+        }
+        $cases['sku empty string mapped=1'] = ['sku', '', true];
+        $cases['sku empty string mapped=0'] = ['sku', '', false];
+
+        return $cases;
+    }
+
+    /**
+     * A registered SKU special attribute overwrites the already constructed SKU query.
+     *
+     * @return void
+     */
+    public function testSkuSpecialAttributeOverridesSkuQuery()
+    {
+        $queryTypes = [];
+        $realFactory = $this->getQueryFactory();
+        $factory = $this->createMock(QueryFactory::class);
+        $factory->method('create')->willReturnCallback(function ($type, $params) use (&$queryTypes, $realFactory) {
+            $queryTypes[] = $type;
+
+            return $realFactory->create($type, $params);
+        });
+        $specialQuery = new Terms([], 'entity_id');
+        $specialAttribute = $this->createMock(HasImage::class);
+        $specialAttribute->expects($this->once())->method('getSearchQuery')->willReturnCallback(
+            function () use (&$queryTypes, $specialQuery) {
+                $this->assertSame([QueryInterface::TYPE_MATCH, QueryInterface::TYPE_BOOL], $queryTypes);
+
+                return $specialQuery;
+            }
+        );
+        $builder = new QueryBuilder(
+            $this->getAdvancedAttributeList([
+                new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER),
+                new Field('sku', FieldInterface::FIELD_TYPE_TEXT),
+            ]),
+            $factory,
+            new SpecialAttributesProvider(['sku' => $specialAttribute]),
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
+        );
+        $condition = $this->getProductConditionMock();
+        $condition->method('getValue')->willReturn('');
+        $condition->method('__call')->willReturnMap([
+            ['getAttribute', [], 'sku'],
+            ['getOperator', [], '=='],
+        ]);
+
+        $this->assertSame($specialQuery, $builder->getSearchQuery($condition));
+    }
+
+    /**
+     * Field resolvers provided by extensions must participate in availability checks.
+     *
+     * @return void
+     */
+    public function testAttributeAvailabilityUsesFieldResolver()
+    {
+        $attributeList = $this->getMockBuilder(AttributeList::class)
+            ->disableOriginalConstructor()->onlyMethods(['getField'])->getMock();
+        $attributeList->expects($this->once())->method('getField')->with('extension_field')
+            ->willReturn(new Field('extension_field', FieldInterface::FIELD_TYPE_INTEGER));
+
+        $this->assertTrue($attributeList->hasField('extension_field'));
+    }
+
+    /**
+     * Pin the parent Boolean structure, including NOT(false) under a FALSE parent.
+     *
+     * @dataProvider combineProvider
+     * @param string $aggregator Parent aggregator.
+     * @param bool   $value      Parent truth value.
+     * @param string $clause     Expected Boolean clause.
+     * @return void
+     */
+    public function testCombineWithUnmappedCondition($aggregator, $value, $clause)
+    {
+        $builder = new QueryBuilder(
+            $this->getAdvancedAttributeList([
+                new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER),
+                new Field('brand', FieldInterface::FIELD_TYPE_INTEGER),
+            ]),
+            $this->getQueryFactory(),
+            $this->getSpecialAttributesProvider(),
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class),
+            $this->createMock(LoggerInterface::class)
+        );
+        $conditions = [];
+        $children = [];
+        foreach (['unmapped', 'brand'] as $attribute) {
+            $condition = $this->getProductConditionMock();
+            $condition->method('getValue')->willReturn('7');
+            $condition->method('getInputType')->willReturn('select');
+            $condition->method('__call')->willReturnMap([
+                ['getAttribute', [], $attribute],
+                ['getOperator', [], '=='],
+            ]);
+            $children[] = $builder->getSearchQuery($condition);
+            $condition->method('getSearchQuery')->willReturn(end($children));
+            $conditions[] = $condition;
+        }
+        $combine = $this->getMockBuilder(Combine::class)->disableOriginalConstructor()
+            ->onlyMethods(['getConditions', 'getValue', '__call', 'asStringRecursive'])->getMock();
+        $combine->method('getConditions')->willReturn($conditions);
+        $combine->method('getValue')->willReturn($value);
+        $combine->method('__call')->willReturnMap([['getAggregator', [], $aggregator]]);
+        $property = new \ReflectionProperty(Combine::class, 'queryFactory');
+        $property->setAccessible(true);
+        $property->setValue($combine, $this->getQueryFactory());
+
+        $query = $combine->getSearchQuery();
+        $clauses = $clause === 'must' ? $query->getMust() : $query->getShould();
+        $this->assertCount(2, $clauses);
+        foreach ($clauses as $index => $child) {
+            if (!$value) {
+                $this->assertInstanceOf(Not::class, $child);
+                $child = $child->getQuery();
+            }
+            $this->assertSame($children[$index], $child);
+        }
+        $this->assertSame([], $children[0]->getValues());
+        $this->assertSame('entity_id', $children[0]->getField());
+        $this->assertSame('brand', $children[1]->getField());
+        $this->assertSame('7', $children[1]->getValues()[0]);
+    }
+
+    /**
+     * TRUE ALL = false; TRUE ANY = mapped; FALSE ALL = NOT(mapped); FALSE ANY = true.
+     *
+     * @return array
+     */
+    public static function combineProvider(): array
+    {
+        return [
+            'ALL TRUE' => ['all', true, 'must'],
+            'ANY TRUE' => ['any', true, 'should'],
+            'ALL FALSE' => ['all', false, 'must'],
+            'ANY FALSE' => ['any', false, 'should'],
+        ];
+    }
+
+    /**
      * Test query builder with special attributes for has_image.
      *
      * @return void
@@ -101,6 +414,8 @@ class QueryBuilderTest extends TestCase
     public function testSpecialAttributesHasImageQuery()
     {
         $attributeList = $this->getAttributeList();
+        $attributeList->expects($this->never())->method('hasField');
+        $attributeList->expects($this->never())->method('getField');
         $specialAttributesProvider = $this->getSpecialAttributesProvider();
         $queryBuilder = new QueryBuilder(
             $attributeList,
@@ -1668,10 +1983,11 @@ class QueryBuilderTest extends TestCase
      * Get partially mocked attribute list.
      *
      * @param array $mappingFields Mapping fields.
+     * @param array $mockMethods   Methods to mock.
      *
      * @return AttributeList|MockObject
      */
-    protected function getAdvancedAttributeList($mappingFields)
+    protected function getAdvancedAttributeList($mappingFields, $mockMethods = ['getAttributeCollection'])
     {
         $mapping = new Mapping('entity_id', $mappingFields);
 
@@ -1726,7 +2042,7 @@ class QueryBuilderTest extends TestCase
                 $fieldMapper,
                 $layeredNavAttrProvider,
             ])
-            ->onlyMethods(['getAttributeCollection'])->getMock();
+            ->onlyMethods($mockMethods)->getMock();
         $attributeListMock->method('getAttributeCollection')->willReturn([
             $category,
             $price,
