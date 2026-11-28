@@ -61,8 +61,18 @@ class SearchTerms extends \Magento\Backend\Block\Template
             ;
         }
 
-        foreach ($data as &$value) {
-            $value['url'] = $this->getMerchandiserUrl($value['term']);
+        if ($data) {
+            $terms = [];
+            foreach ($data as $key => $value) {
+                if (isset($value['term'])) {
+                    $terms[$key] = (string) $value['term'];
+                }
+            }
+            $queryIds = $terms ? $this->getQueryIds($terms) : [];
+            foreach ($data as $key => &$value) {
+                $queryId = $queryIds[$key] ?? null;
+                $value['url'] = $queryId ? $this->getUrl('search/term/edit', ['id' => $queryId]) : null;
+            }
         }
 
         return $data;
@@ -79,22 +89,37 @@ class SearchTerms extends \Magento\Backend\Block\Template
     }
 
     /**
-     * Get the term merchandiser URL for a given search term.
+     * Get query IDs using the database comparison rules for each report term.
      *
-     * @param string $term Search term.
+     * @param string[] $terms Search terms.
      *
-     * @return null|string
+     * @return array
      */
-    private function getMerchandiserUrl($term)
+    private function getQueryIds(array $terms)
     {
-        $url = null;
-
         $query = $this->queryFactory->create();
-        $query->loadByQueryText($term);
-        if ($query->getId()) {
-            $url = $this->getUrl('search/term/edit', ['id' => $query->getId()]);
+        $resource = $query->getResource();
+        $connection = $resource->getConnection();
+        $queryIds = [];
+        foreach (array_chunk($terms, 100, true) as $batch) {
+            $columns = [];
+            $aliases = [];
+            foreach ($batch as $key => $term) {
+                $alias = 'term_' . count($columns);
+                $aliases[$key] = $alias;
+                $columns[$alias] = new \Zend_Db_Expr(
+                    'MAX(CASE WHEN query_text = ' . $connection->quote((string) $term) . ' THEN query_id END)'
+                );
+            }
+            $select = $connection->select()->from($resource->getMainTable(), $columns)
+                ->where('store_id = ?', $query->getStoreId())
+                ->where('query_text IN (?)', array_values($batch));
+            $result = $connection->fetchRow($select);
+            foreach ($aliases as $key => $alias) {
+                $queryIds[$key] = $result[$alias] ?? null;
+            }
         }
 
-        return $url;
+        return $queryIds;
     }
 }
