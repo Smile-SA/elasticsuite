@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 
 /**
@@ -116,6 +117,8 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     /**
      * Retrieve currently selected category children categories.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @return \Magento\Catalog\Model\ResourceModel\Category\Collection|\Magento\Catalog\Model\Category[]
      */
     protected function getChildrenCategories()
@@ -127,11 +130,21 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
             if ($this->virtualCategoryRoot->useVirtualRootCategorySubtree($currentCategory)) {
                 $rootCategory = $this->virtualCategoryRoot->getVirtualCategoryRoot($currentCategory);
                 if ($rootCategory->getId()) {
+                    $currentCategoryId = (int) $currentCategory->getId();
                     $this->childrenCategories = $rootCategory->getChildrenCategories();
-                    $this->childrenCategories->clear()->addFieldToFilter(
-                        'entity_id',
-                        ['neq' => $currentCategory->getId()]
-                    );
+                    if ($this->childrenCategories instanceof Collection) {
+                        $this->childrenCategories->clear()->addFieldToFilter(
+                            'entity_id',
+                            ['neq' => $currentCategoryId]
+                        );
+                    } else {
+                        $this->childrenCategories = array_filter(
+                            $this->childrenCategories,
+                            static function ($category) use ($currentCategoryId) {
+                                return (int) $category->getId() !== $currentCategoryId;
+                            }
+                        );
+                    }
                 }
             }
         }
